@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+*.egg-info/
+
+# Data (DVC-tracked, not git-tracked directly)
+# NOTE: reviews.csv is committed directly (not DVC-tracked) so the pipeline
+# runs out of the box on a fresh clone. Once you're using DVC for real with
+# a configured remote, you'd typically dvc-track this instead and remove
+# it from git -- see README.
+/data/raw/*
+!/data/raw/.gitkeep
+!/data/raw/reviews.csv
+/data/processed/*
+!/data/processed/.gitkeep
+/data/live/*
+!/data/live/.gitkeep
+!/data/live/predictions.csv
+
+# Model artifacts / experiment outputs
+outputs/
+models/*
+!models/.gitkeep
+mlruns/
+mlflow.db
+reports/*.html
+
+# Env
+.env
+
+# OS
+.DS_Store

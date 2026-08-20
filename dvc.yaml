@@ -1,0 +1,38 @@
+stages:
+  prepare:
+    cmd: python src/data/prepare_data.py --params params.yaml
+    deps:
+      - src/data/prepare_data.py
+      - data/raw/reviews.csv
+    params:
+      - data
+    outs:
+      - data/processed/train.csv
+      - data/processed/val.csv
+      - data/processed/test.csv
+
+  train:
+    cmd: python src/train/train.py --params params.yaml
+    deps:
+      - src/train/train.py
+      - data/processed/train.csv
+      - data/processed/val.csv
+    params:
+      - model
+      - train
+      - mlflow
+    outs:
+      - models/latest_run_id.txt
+
+  evaluate:
+    cmd: python src/train/evaluate.py --params params.yaml
+    deps:
+      - src/train/evaluate.py
+      - data/processed/test.csv
+      - models/latest_run_id.txt
+    params:
+      - registry
+      - mlflow
+    metrics:
+      - metrics/eval_metrics.json:
+          cache: false

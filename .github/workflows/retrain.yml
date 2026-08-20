@@ -1,0 +1,105 @@
+name: Monitor & Retrain
+
+on:
+  schedule:
+    - cron: "0 3 * * 1"   # weekly, Monday 03:00 UTC
+  workflow_dispatch: {}     # manual trigger
+  repository_dispatch:
+    types: [drift-detected]  # can be fired externally by a live monitoring job
+
+jobs:
+  check-drift:
+    runs-on: ubuntu-latest
+    outputs:
+      drift_detected: ${{ steps.drift.outputs.detected }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - run: pip install -r requirements.txt
+
+      - name: Generate reference data (prepare stage, needed for drift comparison)
+        run: python src/data/prepare_data.py --params params.yaml
+
+      - name: Pull latest production prediction logs
+        run: |
+          # In production, pull data/live/predictions.csv from wherever the
+          # API writes it (persistent volume, S3, etc.) before this step.
+          # The repo ships with a small seed file at data/live/predictions.csv
+          # so this workflow has something to compare against on a fresh
+          # checkout; replace this step with a real fetch once you have live
+          # traffic to monitor.
+          echo "Using seed predictions.csv (see data/live/predictions.csv)."
+
+      - name: Run drift check
+        id: drift
+        run: |
+          python src/monitoring/monitor.py \
+            --reference data/processed/test.csv \
+            --current data/live/predictions.csv \
+            --params params.yaml \
+          && echo "detected=false" >> "$GITHUB_OUTPUT" \
+          || echo "detected=true" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: drift-report
+          path: reports/drift_report.html
+
+  retrain:
+    needs: check-drift
+    if: needs.check-drift.outputs.drift_detected == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - run: pip install -r requirements.txt
+
+      - name: DVC init (repo has no remote configured by default)
+        run: dvc init --no-scm --force || true
+
+      - name: Configure DVC remote credentials (only if a remote + secrets exist)
+        run: |
+          if dvc remote list | grep -q storage; then
+            dvc remote modify storage access_key_id "${{ secrets.DVC_ACCESS_KEY_ID }}" || true
+            dvc remote modify storage secret_access_key "${{ secrets.DVC_SECRET_ACCESS_KEY }}" || true
+            echo "dvc_remote_configured=true" >> "$GITHUB_ENV"
+          else
+            echo "No DVC remote named 'storage' configured in this repo yet -- skipping remote data pull/push."
+            echo "See README for how to set one up (dvc remote add -d storage <url>)."
+            echo "dvc_remote_configured=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Pull latest data (only if remote configured)
+        if: env.dvc_remote_configured == 'true'
+        run: dvc pull
+
+      - name: Run full pipeline (prepare -> train -> evaluate -> conditional promote)
+        env:
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+        run: dvc repro
+
+      - name: Push updated data/model artifacts
+        run: |
+          if [ "$dvc_remote_configured" = "true" ]; then
+            dvc push
+          fi
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add dvc.lock metrics/eval_metrics.json
+          git commit -m "Automated retrain: $(date -u +%Y-%m-%dT%H:%M:%SZ)" || echo "No changes to commit"
+          git push
+
+      - name: Notify on promotion
+        run: |
+          echo "Check metrics/eval_metrics.json and MLflow registry for promotion status."
+          # Wire up a Slack/email notification here if desired.

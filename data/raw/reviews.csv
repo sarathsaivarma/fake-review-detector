@@ -1,0 +1,16 @@
+review_text,rating,verified_purchase,reviewer_id,product_id,review_date,is_fake
+"This product completely changed my life, five stars, best purchase ever!!!",5,False,r001,p100,2024-01-05,1
+"Works well, does what it says. Had it for two months, no issues so far.",4,True,r002,p100,2024-01-06,0
+"BEST PRODUCT EVER BUY NOW AMAZING QUALITY!!!",5,False,r003,p100,2024-01-06,1
+"Decent value for the price. Shipping was a bit slow but the item itself is fine.",3,True,r004,p101,2024-01-07,0
+"Terrible, broke after one use, do not recommend to anyone",1,True,r005,p101,2024-01-08,0
+"AMAZING PRODUCT BEST PRODUCT EVER BUY NOW AMAZING QUALITY!!!",5,False,r006,p102,2024-01-08,1
+"I've used this daily for three weeks. Solid build quality, minor wear on the strap.",4,True,r007,p102,2024-01-09,0
+"Five stars great product perfect amazing wonderful",5,False,r008,p103,2024-01-09,1
+"Disappointed with the packaging, item arrived slightly damaged but customer service replaced it quickly.",3,True,r009,p103,2024-01-10,0
+"Perfect perfect perfect five stars buy now limited time",5,False,r010,p104,2024-01-10,1
+"Good for the price point, wouldn't call it premium but it does the job.",4,True,r011,p104,2024-01-11,0
+"Never received the item, seller was unresponsive, requested a refund.",1,False,r012,p105,2024-01-11,0
+"This is honestly the greatest thing I've ever bought in my entire life 5 stars!!!",5,False,r013,p105,2024-01-12,1
+"Battery life is shorter than advertised, otherwise a fine product for casual use.",3,True,r014,p106,2024-01-12,0
+"BUY NOW BEST DEAL AMAZING QUALITY FIVE STARS",5,False,r015,p106,2024-01-13,1

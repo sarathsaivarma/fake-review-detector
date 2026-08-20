@@ -1,0 +1,43 @@
+data:
+  raw_path: data/raw/reviews.csv
+  processed_dir: data/processed
+  test_size: 0.15
+  val_size: 0.15
+  random_state: 42
+  text_column: review_text
+  label_column: is_fake
+  min_review_length: 5
+
+model:
+  base_model: bert-base-uncased
+  max_length: 256
+  num_labels: 2
+
+train:
+  epochs: 4
+  batch_size: 16
+  learning_rate: 2e-5
+  weight_decay: 0.01
+  warmup_ratio: 0.06
+  eval_strategy: epoch
+  early_stopping_patience: 2
+  seed: 42
+
+registry:
+  model_name: fake-review-bert
+  # a candidate model must beat the current Production model by at least
+  # this much on F1 to be promoted (prevents flapping on noise)
+  promotion_margin: 0.01
+  min_f1_threshold: 0.75
+
+mlflow:
+  # Local SQLite backend by default -- works anywhere with zero setup
+  # (Colab, laptop, CI). For a shared team server, either edit this to
+  # http://your-mlflow-host:5000 or set the MLFLOW_TRACKING_URI env var,
+  # which always takes precedence (see src/utils/config.py).
+  tracking_uri: sqlite:///mlflow.db
+  experiment_name: fake-review-detection
+
+monitoring:
+  drift_share_threshold: 0.3   # fraction of drifted features that triggers alert
+  f1_degradation_threshold: 0.05

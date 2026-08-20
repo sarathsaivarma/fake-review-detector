@@ -1,0 +1,5 @@
+timestamp,review_id,review_text,fraud_probability,is_fake,model_version,latency_ms
+2026-01-01T00:00:00+00:00,seed-1,"Solid product, works as described, would buy again.",0.15,False,seed,3.2
+2026-01-01T00:00:01+00:00,seed-2,"BEST PRODUCT EVER BUY NOW AMAZING QUALITY!!!",0.88,True,seed,2.8
+2026-01-01T00:00:02+00:00,seed-3,"Shipping was slow but the item itself works fine.",0.20,False,seed,3.1
+2026-01-01T00:00:03+00:00,seed-4,"Perfect five stars amazing perfect buy now",0.79,True,seed,2.9

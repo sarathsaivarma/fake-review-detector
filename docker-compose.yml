@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  mlflow:
+    image: python:3.11-slim
+    working_dir: /mlflow
+    command: >
+      bash -c "pip install --no-cache-dir mlflow==2.13.0 &&
+               mlflow server --host 0.0.0.0 --port 5000
+               --backend-store-uri sqlite:///mlflow.db
+               --default-artifact-root /mlflow/artifacts"
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow_data:/mlflow
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    depends_on:
+      - mlflow
+    volumes:
+      - ./data/live:/app/data/live
+
+volumes:
+  mlflow_data:
