@@ -22,7 +22,7 @@ import pandas as pd
 from scipy.stats import ks_2samp
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
-from src.utils.config import load_params
+from src.utils.config import load_params  # noqa: E402
 
 
 def build_features(df: pd.DataFrame, text_col: str) -> pd.DataFrame:
@@ -40,8 +40,10 @@ def main():
     parser.add_argument("--reference", required=True)
     parser.add_argument("--current", required=True)
     parser.add_argument("--params", default="params.yaml")
-    parser.add_argument("--alpha", type=float, default=0.05,
-                         help="p-value threshold below which a feature is 'drifted'")
+    parser.add_argument(
+        "--alpha", type=float, default=0.05,
+        help="p-value threshold below which a feature is 'drifted'",
+    )
     args = parser.parse_args()
 
     params = load_params(args.params)

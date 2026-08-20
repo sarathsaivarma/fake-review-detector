@@ -24,7 +24,7 @@ import pandas as pd
 from scipy.stats import ks_2samp
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
-from src.utils.config import load_params
+from src.utils.config import load_params  # noqa: E402
 
 
 def build_features(df: pd.DataFrame, text_col: str) -> pd.DataFrame:
@@ -37,8 +37,9 @@ def build_features(df: pd.DataFrame, text_col: str) -> pd.DataFrame:
     return out.drop(columns=["text"])
 
 
-def generate_evidently_report(ref_feats: pd.DataFrame, cur_feats: pd.DataFrame,
-                               output_html: str) -> bool:
+def generate_evidently_report(
+    ref_feats: pd.DataFrame, cur_feats: pd.DataFrame, output_html: str
+) -> bool:
     """Best-effort HTML report via Evidently. Returns True if it succeeded.
     Failures here don't block the pipeline -- the KS-test gate below is
     the source of truth for the pass/fail decision."""
@@ -71,8 +72,10 @@ def main():
     parser.add_argument("--current", required=True, help="Recent production predictions CSV")
     parser.add_argument("--params", default="params.yaml")
     parser.add_argument("--output-html", default="reports/drift_report.html")
-    parser.add_argument("--alpha", type=float, default=0.05,
-                         help="p-value threshold below which a feature is 'drifted'")
+    parser.add_argument(
+        "--alpha", type=float, default=0.05,
+        help="p-value threshold below which a feature is 'drifted'",
+    )
     args = parser.parse_args()
 
     params = load_params(args.params)

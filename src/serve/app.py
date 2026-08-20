@@ -76,8 +76,9 @@ def load_model():
 def _predict_one(text: str):
     start = time.time()
     with torch.no_grad():
-        enc = _tokenizer(text, truncation=True, max_length=MAX_LENGTH,
-                          return_tensors="pt")
+        enc = _tokenizer(
+            text, truncation=True, max_length=MAX_LENGTH, return_tensors="pt"
+        )
         logits = _model(**enc).logits
         prob = torch.softmax(logits, dim=1)[0, 1].item()
     latency_ms = (time.time() - start) * 1000

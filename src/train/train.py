@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 import torch
 from datasets import Dataset
-from sklearn.metrics import f1_score, precision_recall_fscore_support, roc_auc_score
+from sklearn.metrics import precision_recall_fscore_support, roc_auc_score
 from transformers import (
     AutoModelForSequenceClassification,
     AutoTokenizer,
@@ -26,7 +26,7 @@ from transformers import (
 )
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
-from src.utils.config import load_params, base_arg_parser
+from src.utils.config import load_params, base_arg_parser  # noqa: E402
 
 
 def load_split(path, text_col, label_col, tokenizer, max_length):
@@ -121,7 +121,11 @@ def main():
         eval_dataset=val_ds,
         data_collator=collator,
         compute_metrics=compute_metrics,
-        callbacks=[EarlyStoppingCallback(early_stopping_patience=train_p["early_stopping_patience"])],
+        callbacks=[
+            EarlyStoppingCallback(
+                early_stopping_patience=train_p["early_stopping_patience"]
+            )
+        ],
     )
 
     with mlflow.start_run() as run:

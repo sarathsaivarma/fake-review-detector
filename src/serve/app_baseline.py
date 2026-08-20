@@ -19,8 +19,8 @@ import joblib
 from flask import Flask, jsonify, request
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
-from src.utils.config import load_params
-from src.train import local_tracker
+from src.utils.config import load_params  # noqa: E402
+from src.train import local_tracker  # noqa: E402
 
 app = Flask(__name__)
 STATE = {"pipeline": None, "run_id": None}

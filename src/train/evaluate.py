@@ -17,7 +17,7 @@ from mlflow.tracking import MlflowClient
 from sklearn.metrics import precision_recall_fscore_support, roc_auc_score
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
-from src.utils.config import load_params, base_arg_parser
+from src.utils.config import load_params, base_arg_parser  # noqa: E402
 
 
 def score_test_set(model, tokenizer, df, text_col, label_col, max_length):

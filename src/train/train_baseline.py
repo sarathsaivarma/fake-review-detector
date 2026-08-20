@@ -22,8 +22,8 @@ from sklearn.metrics import precision_recall_fscore_support, roc_auc_score
 from sklearn.pipeline import Pipeline
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
-from src.utils.config import load_params, base_arg_parser
-from src.train import local_tracker
+from src.utils.config import load_params, base_arg_parser  # noqa: E402
+from src.train import local_tracker  # noqa: E402
 
 
 def main():

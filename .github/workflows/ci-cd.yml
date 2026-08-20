@@ -25,7 +25,7 @@ jobs:
       - name: Lint
         run: |
           flake8 src --max-line-length=100 --extend-ignore=E203
-          black --check src
+          black --check --line-length 100 src
 
       - name: Unit tests
         run: pytest tests/ -v

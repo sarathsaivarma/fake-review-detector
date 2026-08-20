@@ -19,7 +19,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
-from src.utils.config import load_params, base_arg_parser
+from src.utils.config import load_params, base_arg_parser  # noqa: E402
 
 
 def clean_text(text: str) -> str:
