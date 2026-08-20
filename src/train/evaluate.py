@@ -26,8 +26,10 @@ def score_test_set(model, tokenizer, df, text_col, label_col, max_length):
     with torch.no_grad():
         for i in range(0, len(df), 32):
             batch_texts = df[text_col].iloc[i:i + 32].tolist()
-            enc = tokenizer(batch_texts, truncation=True, padding=True,
-                             max_length=max_length, return_tensors="pt")
+            enc = tokenizer(
+                batch_texts, truncation=True, padding=True,
+                max_length=max_length, return_tensors="pt",
+            )
             logits = model(**enc).logits
             probs = torch.softmax(logits, dim=1)[:, 1].numpy()
             all_probs.extend(probs)
