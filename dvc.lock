@@ -1,0 +1,104 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python src/data/prepare_data.py --params params.yaml
+    deps:
+    - path: data/raw/reviews.csv
+      hash: md5
+      md5: ae5aa56ed2253803492719178dfd3c97
+      size: 1607
+    - path: src/data/prepare_data.py
+      hash: md5
+      md5: 26dbd71887d5d80fd2bcbe8f8ea2b6ff
+      size: 2964
+    params:
+      params.yaml:
+        data:
+          raw_path: data/raw/reviews.csv
+          processed_dir: data/processed
+          test_size: 0.15
+          val_size: 0.15
+          random_state: 42
+          text_column: review_text
+          label_column: is_fake
+          min_review_length: 5
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 7e93de9fd5626b33f4266c08724e9e2a
+      size: 409
+    - path: data/processed/train.csv
+      hash: md5
+      md5: c07d0be4e2e40ba6e2b89d417446681c
+      size: 1085
+    - path: data/processed/val.csv
+      hash: md5
+      md5: e48c911df66579d00e35942b818aa3cb
+      size: 259
+  train:
+    cmd: python src/train/train.py --params params.yaml
+    deps:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: c07d0be4e2e40ba6e2b89d417446681c
+      size: 1085
+    - path: data/processed/val.csv
+      hash: md5
+      md5: e48c911df66579d00e35942b818aa3cb
+      size: 259
+    - path: src/train/train.py
+      hash: md5
+      md5: 0e8f6454d3a28ae56b5904f10c3cf392
+      size: 5250
+    params:
+      params.yaml:
+        mlflow:
+          tracking_uri: sqlite:///mlflow.db
+          experiment_name: fake-review-detection
+        model:
+          base_model: bert-base-uncased
+          max_length: 256
+          num_labels: 2
+        train:
+          epochs: 4
+          batch_size: 16
+          learning_rate: 2e-05
+          weight_decay: 0.01
+          warmup_ratio: 0.06
+          eval_strategy: epoch
+          early_stopping_patience: 2
+          seed: 42
+    outs:
+    - path: models/latest_run_id.txt
+      hash: md5
+      md5: 842135f7550d4e17540af4be99c9175b
+      size: 32
+  evaluate:
+    cmd: python src/train/evaluate.py --params params.yaml
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 7e93de9fd5626b33f4266c08724e9e2a
+      size: 409
+    - path: models/latest_run_id.txt
+      hash: md5
+      md5: 842135f7550d4e17540af4be99c9175b
+      size: 32
+    - path: src/train/evaluate.py
+      hash: md5
+      md5: 75c874fad996547eaeffae719212aaf7
+      size: 4064
+    params:
+      params.yaml:
+        mlflow:
+          tracking_uri: sqlite:///mlflow.db
+          experiment_name: fake-review-detection
+        registry:
+          model_name: fake-review-bert
+          promotion_margin: 0.01
+          min_f1_threshold: 0.75
+    outs:
+    - path: metrics/eval_metrics.json
+      hash: md5
+      md5: d10117b64628defd7476a86a7ffc9d23
+      size: 90
