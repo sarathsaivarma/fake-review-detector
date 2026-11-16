@@ -5,8 +5,8 @@ stages:
     deps:
     - path: data/raw/reviews.csv
       hash: md5
-      md5: ae5aa56ed2253803492719178dfd3c97
-      size: 1607
+      md5: e6a93cf1c551bc5b2f6cf199b0974282
+      size: 50334
     - path: src/data/prepare_data.py
       hash: md5
       md5: 26dbd71887d5d80fd2bcbe8f8ea2b6ff
@@ -25,27 +25,27 @@ stages:
     outs:
     - path: data/processed/test.csv
       hash: md5
-      md5: 7e93de9fd5626b33f4266c08724e9e2a
-      size: 409
+      md5: 719e26457661bc68d2ac752e96b58a1b
+      size: 6451
     - path: data/processed/train.csv
       hash: md5
-      md5: c07d0be4e2e40ba6e2b89d417446681c
-      size: 1085
+      md5: bdae5c677595415d08509d6577e46ada
+      size: 30348
     - path: data/processed/val.csv
       hash: md5
-      md5: e48c911df66579d00e35942b818aa3cb
-      size: 259
+      md5: 88b00d5875acc9c5695d35a04d0f7694
+      size: 6446
   train:
     cmd: python src/train/train.py --params params.yaml
     deps:
     - path: data/processed/train.csv
       hash: md5
-      md5: c07d0be4e2e40ba6e2b89d417446681c
-      size: 1085
+      md5: bdae5c677595415d08509d6577e46ada
+      size: 30348
     - path: data/processed/val.csv
       hash: md5
-      md5: e48c911df66579d00e35942b818aa3cb
-      size: 259
+      md5: 88b00d5875acc9c5695d35a04d0f7694
+      size: 6446
     - path: src/train/train.py
       hash: md5
       md5: 0e8f6454d3a28ae56b5904f10c3cf392
@@ -71,18 +71,18 @@ stages:
     outs:
     - path: models/latest_run_id.txt
       hash: md5
-      md5: 2ddbcc8d20c275a04d43e33f06f9adc8
+      md5: aa15cfda694b08646ea95ed78790fe38
       size: 32
   evaluate:
     cmd: python src/train/evaluate.py --params params.yaml
     deps:
     - path: data/processed/test.csv
       hash: md5
-      md5: 7e93de9fd5626b33f4266c08724e9e2a
-      size: 409
+      md5: 719e26457661bc68d2ac752e96b58a1b
+      size: 6451
     - path: models/latest_run_id.txt
       hash: md5
-      md5: 2ddbcc8d20c275a04d43e33f06f9adc8
+      md5: aa15cfda694b08646ea95ed78790fe38
       size: 32
     - path: src/train/evaluate.py
       hash: md5
@@ -100,5 +100,5 @@ stages:
     outs:
     - path: metrics/eval_metrics.json
       hash: md5
-      md5: d10117b64628defd7476a86a7ffc9d23
-      size: 90
+      md5: 00277434ec4ce183af37f80608b13367
+      size: 106
