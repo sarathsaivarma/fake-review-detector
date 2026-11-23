@@ -71,7 +71,7 @@ stages:
     outs:
     - path: models/latest_run_id.txt
       hash: md5
-      md5: aa15cfda694b08646ea95ed78790fe38
+      md5: b8590b2463624e1effc180382e53f31b
       size: 32
   evaluate:
     cmd: python src/train/evaluate.py --params params.yaml
@@ -82,7 +82,7 @@ stages:
       size: 6451
     - path: models/latest_run_id.txt
       hash: md5
-      md5: aa15cfda694b08646ea95ed78790fe38
+      md5: b8590b2463624e1effc180382e53f31b
       size: 32
     - path: src/train/evaluate.py
       hash: md5
